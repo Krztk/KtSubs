@@ -124,6 +124,12 @@ namespace KtSubs.Wpf.ViewModels
             var extension = Path.GetExtension(result.Path);
             if (extension == ".mkv")
             {
+                if (!mkvSubtitleExtractor.HasMkvToolkit())
+                {
+                    Loading = false;
+                    MessageBox.Show("MkvToolkit not detected. Check settings.");
+                    return;
+                }
                 var tracks = await mkvSubtitleExtractor.GetSubtitlesTrackData(result.Path);
                 if (tracks.Count == 0)
                 {

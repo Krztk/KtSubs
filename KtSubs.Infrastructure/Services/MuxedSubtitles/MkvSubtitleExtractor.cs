@@ -27,6 +27,11 @@ namespace KtSubs.Infrastructure.Services.MuxedSubtitles
             SetMkvtoolnixProgramPaths();
         }
 
+        public bool HasMkvToolkit()
+        {
+            return Path.Exists(mvkmergePath) && Path.Exists(mkvextractPath);
+        }
+
         public async Task<List<Track>> GetSubtitlesTrackData(string filePath)
         {
             var stdOutBuffer = new StringBuilder();

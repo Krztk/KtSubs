@@ -1,0 +1,62 @@
+﻿<Window x:Class="KtSubs.Wpf.Views.MainView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:KtSubs.Wpf.Views"
+        xmlns:viewModels="clr-namespace:KtSubs.Wpf.ViewModels"
+        xmlns:local="clr-namespace:KtSubs.Wpf"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        mc:Ignorable="d"
+        x:Name="root"
+        Title="{Binding Title}" Height="450">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="File">
+                <MenuItem Header="Save" Command="{Binding SaveCommand}" />
+                <MenuItem Header="Settings" Command="{Binding OpenSettingsCommand}" />
+            </MenuItem>
+            <MenuItem Header="Subtitles">
+                <MenuItem Header="Load subs" Command="{Binding OpenFileCommand}" />
+                <MenuItem Header="Active layers" Command="{Binding OpenLayersSettingsCommand}" />
+            </MenuItem>
+        </Menu>
+        <Grid Margin="20" DockPanel.Dock="Top">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Loading}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Loading}" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <fa:ImageAwesome Icon="Refresh" Spin="True" Height="48" Width="48" />
+        </Grid>
+        <ListBox x:Name="wordsList" ItemsSource="{Binding SelectedWords}">
+            <ListBox.Resources>
+                <local:BindingProxy x:Key="selectedIndexProxy" Data="{Binding SelectedIndex, RelativeSource={RelativeSource FindAncestor, AncestorType=ListBox}}" />
+            </ListBox.Resources>
+            <ListBox.InputBindings>
+                <KeyBinding Key="Delete" Command="{Binding DeleteWordCommand}" CommandParameter="{Binding SelectedIndex, RelativeSource={RelativeSource FindAncestor, AncestorType=ListBox}}" />
+            </ListBox.InputBindings>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Tag" Value="{Binding Path=DataContext, RelativeSource={RelativeSource AncestorType=ListBox}}" />
+                    <Setter Property="ContextMenu">
+                        <Setter.Value>
+                            <ContextMenu Tag="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource Self}}">
+                                <MenuItem Header="Delete"
+                                  Command="{Binding PlacementTarget.Tag.DeleteWordCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  CommandParameter="{Binding Data, Source={StaticResource selectedIndexProxy}}" />
+                            </ContextMenu>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+    </DockPanel>
+</Window>

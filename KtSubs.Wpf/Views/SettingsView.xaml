@@ -1,0 +1,60 @@
+﻿    <Window x:Class="KtSubs.Wpf.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:KtSubs.Wpf.Views"
+             xmlns:xaml="clr-namespace:KtSubs.Wpf.XamlHelpers"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Label Margin="5">Settings:</Label>
+        <StackPanel Grid.Row="1">
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0"  Content="Web Interface Password:" />
+                <PasswordBox Grid.Column="1" xaml:Secure.Password="{Binding Settings.WebInterfacePassword, Mode=TwoWay}" VerticalContentAlignment="Center" />
+            </Grid>
+
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="Port:" />
+                <TextBox Grid.Column="1" VerticalContentAlignment="Center" Text="{Binding Settings.Port}" />
+            </Grid>
+
+            <Grid Margin="10 5">
+                <CheckBox Content="Pause Video When Selecting" Grid.Column="1" IsChecked="{Binding Settings.PauseVideoWhenSelecting}" />
+            </Grid>
+
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="MkvToolnix Folder:" />
+                <TextBox Grid.Column="1" VerticalContentAlignment="Center" Text="{Binding Settings.MkvToolnixFolder}" />
+            </Grid>
+        </StackPanel>
+        <Grid Grid.Row="2" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Padding="20 5" Margin="0 0 5 0" Grid.Column="1" Name="cancelButton" IsCancel="True">Cancel</Button>
+            <Button Padding="20 5" Grid.Column="2" Name="okButton" IsDefault="True" Click="CloseWindow" Command="{Binding SaveCommand}">Save</Button>
+        </Grid>
+    </Grid>
+</Window>

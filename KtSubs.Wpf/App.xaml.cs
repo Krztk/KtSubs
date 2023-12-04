@@ -65,7 +65,7 @@ namespace KtSubs.Wpf
             settingsProvider.SettingsChanged += HandleSettingsChanged;
             var vlcService = container.Resolve<VlcStatusService>();
             var settings = settingsProvider.GetSettings();
-            vlcService.SetAccessSettings(settings.WebInterfacePassword, 8080);
+            vlcService.SetAccessSettings(settings.WebInterfacePassword, settings.Port);
             MainWindow = container.Resolve<MainView>();
             MainWindow.DataContext = container.Resolve<MainViewModel>();
 
@@ -90,7 +90,7 @@ namespace KtSubs.Wpf
             }
 
             var vlcService = container.Resolve<VlcStatusService>();
-            vlcService.SetAccessSettings(settings.WebInterfacePassword, 8080);
+            vlcService.SetAccessSettings(settings.WebInterfacePassword, settings.Port);
         }
     }
 }

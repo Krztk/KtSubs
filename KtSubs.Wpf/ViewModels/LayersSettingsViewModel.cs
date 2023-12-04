@@ -9,17 +9,17 @@ namespace KtSubs.Wpf.ViewModels
 {
     public class LayersSettingsViewModel : Dialog
     {
-        private readonly LayersSettingsManager layersSettingsManager;
+        private readonly LayersSettings layersSettings;
 
         public List<LayerSettingEntryViewModel> LayerSettings { get; } = new();
         public IRelayCommand SaveSettingsCommand { get; }
 
-        public LayersSettingsViewModel(LayersSettingsManager layersSettingsManager)
+        public LayersSettingsViewModel(LayersSettings layersSettings)
         {
-            this.layersSettingsManager = layersSettingsManager;
+            this.layersSettings = layersSettings;
             SaveSettingsCommand = new RelayCommand(SaveSettings, () => LayerSettings.Any((entry) => entry.IsActive));
 
-            LayerSettings = layersSettingsManager.LayerNameIsActivePair.
+            LayerSettings = layersSettings.LayerNameIsActivePair.
                                       Values.Select(entry => new LayerSettingEntryViewModel(entry, SaveSettingsCommand.NotifyCanExecuteChanged))
                                       .ToList();
         }
@@ -27,7 +27,7 @@ namespace KtSubs.Wpf.ViewModels
         private void SaveSettings()
         {
             var values = LayerSettings.Select(layerSettingsVm => layerSettingsVm.GetLayerSettingsEntry());
-            layersSettingsManager.ReplaceEntries(values);
+            layersSettings.ReplaceEntries(values);
             Close(true);
         }
 

@@ -1,11 +1,11 @@
 ﻿namespace KtSubs.Infrastructure.Services.EntryMergers
 {
-    internal class TimeInterval
+    internal class Interval
     {
         public TimeSpan Start { get; }
         public TimeSpan End { get; }
 
-        public TimeInterval(TimeSpan start, TimeSpan end)
+        public Interval(TimeSpan start, TimeSpan end)
         {
             Start = start;
             End = end;

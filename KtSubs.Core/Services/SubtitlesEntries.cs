@@ -3,19 +3,19 @@ using LanguageExt;
 
 namespace KtSubs.Core.Services
 {
-    public class SubtitlesEntryFinder
+    public class SubtitlesEntries
     {
         private readonly ISubtitlesStore subtitlesStore;
-        private readonly LayersSettingsManager layersSettingsManager;
+        private readonly LayersSettings layersSettings;
 
         private IReadOnlyList<IEntry> SubtitleEntries => subtitlesStore.Entries;
 
         public int EntriesCount => subtitlesStore.Entries.Count;
 
-        public SubtitlesEntryFinder(ISubtitlesStore subtitlesStore, LayersSettingsManager layersSettingsManager)
+        public SubtitlesEntries(ISubtitlesStore subtitlesStore, LayersSettings layerSettings)
         {
             this.subtitlesStore = subtitlesStore;
-            this.layersSettingsManager = layersSettingsManager;
+            this.layersSettings = layerSettings;
         }
 
         public EntriesResult? GetEntry(TimeSpan timeStamp)
@@ -80,7 +80,7 @@ namespace KtSubs.Core.Services
                 return null;
 
             var tempIndex = index;
-            var activeLayers = layersSettingsManager.LayerNameIsActivePair
+            var activeLayers = layersSettings.LayerNameIsActivePair
                                     .Select(x => x.Value)
                                     .Filter(x => x.IsActive).Select(x => x.Name)
                                     .ToList();
@@ -104,7 +104,7 @@ namespace KtSubs.Core.Services
                 return null;
 
             var tempIndex = index;
-            var activeLayers = layersSettingsManager.LayerNameIsActivePair
+            var activeLayers = layersSettings.LayerNameIsActivePair
                                     .Select(x => x.Value)
                                     .Filter(x => x.IsActive).Select(x => x.Name)
                                     .ToList();

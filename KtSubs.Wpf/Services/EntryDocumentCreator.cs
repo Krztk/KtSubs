@@ -12,11 +12,11 @@ namespace KtSubs.Wpf.Services
         private const double textFontSize = 16D;
         private const double subscriptFontSize = 12D;
         private const double layerNameFontSize = 14D;
-        private readonly LayersSettingsManager layersSettingsManager;
+        private readonly LayersSettings layersSettings;
 
-        public EntryDocumentCreator(LayersSettingsManager layersSettingsManager)
+        public EntryDocumentCreator(LayersSettings layerSettings)
         {
-            this.layersSettingsManager = layersSettingsManager;
+            this.layersSettings = layerSettings;
         }
 
         public FlowDocument Create(DisplayEntry displayEntry)
@@ -26,7 +26,7 @@ namespace KtSubs.Wpf.Services
             foreach (var entry in displayEntry.Entries)
             {
                 var layerName = entry.Key;
-                if (!layersSettingsManager.IsLayerActive(layerName))
+                if (!layersSettings.IsLayerActive(layerName))
                 {
                     continue;
                 }

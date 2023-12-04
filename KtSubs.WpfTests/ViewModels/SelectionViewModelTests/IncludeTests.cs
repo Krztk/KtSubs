@@ -44,13 +44,13 @@ namespace KtSubs.WpfTests.ViewModels.SelectionViewModelTests
             var documentHighlighter = Substitute.For<IDocumentHighlighter>();
             var dialogService = Substitute.For<IDialogService>();
             var subtitlesStore = new TestStore();
-            var layerSettingsManager = new LayersSettingsManager(subtitlesStore);
+            var layersSettings = new LayersSettings(subtitlesStore);
             vm = new SelectionViewModel(eventAggregator,
-                                        new SubtitlesEntryFinder(new TestStore(), layerSettingsManager),
+                                        new SubtitlesEntries(new TestStore(), layersSettings),
                                         documentCreator,
                                         documentHighlighter,
                                         dialogService,
-                                        layerSettingsManager);
+                                        layersSettings);
         }
 
         [Fact]

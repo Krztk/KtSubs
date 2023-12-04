@@ -1,13 +1,13 @@
 ﻿namespace KtSubs.Core.Services
 {
-    public class LayersSettingsManager
+    public class LayersSettings
     {
         public event EventHandler LayersSettingsChanged;
 
         private readonly ISubtitlesStore subtitlesStore;
         public SortedDictionary<string, LayerSettingsEntry> LayerNameIsActivePair { get; private set; } = new();
 
-        public LayersSettingsManager(ISubtitlesStore subtitlesStore)
+        public LayersSettings(ISubtitlesStore subtitlesStore)
         {
             this.subtitlesStore = subtitlesStore;
             ReplaceEntries();

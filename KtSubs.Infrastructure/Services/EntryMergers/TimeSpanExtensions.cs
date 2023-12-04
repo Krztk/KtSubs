@@ -2,7 +2,7 @@
 {
     internal static class TimeSpanExtensions
     {
-        public static IEnumerable<TimeInterval> ToIntervals(this IEnumerable<TimeSpan> dates)
+        public static IEnumerable<Interval> ToIntervals(this IEnumerable<TimeSpan> dates)
         {
             using var datesEnumerator = dates.GetEnumerator();
 
@@ -13,7 +13,7 @@
 
             while (datesEnumerator.MoveNext())
             {
-                yield return new TimeInterval(start, datesEnumerator.Current);
+                yield return new Interval(start, datesEnumerator.Current);
                 start = datesEnumerator.Current;
             }
         }

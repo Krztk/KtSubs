@@ -5,5 +5,9 @@
         public SubtitlesReadingException(string? message) : base(message)
         {
         }
+
+        public SubtitlesReadingException(string? message, Exception? innerException) : base(message, innerException)
+        {
+        }
     }
 }

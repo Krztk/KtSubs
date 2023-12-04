@@ -7,12 +7,12 @@ namespace KtSubs.InfrastructureTests.Entries
 {
     public class SubtitleProviderTests
     {
-        private SubtitlesEntryFinder subtitlesProvider;
+        private SubtitlesEntries subtitlesProvider;
 
         public SubtitleProviderTests()
         {
             var store = new TestStore();
-            subtitlesProvider = new SubtitlesEntryFinder(store, new LayersSettingsManager(store));
+            subtitlesProvider = new SubtitlesEntries(store, new LayersSettings(store));
         }
 
         [Fact]

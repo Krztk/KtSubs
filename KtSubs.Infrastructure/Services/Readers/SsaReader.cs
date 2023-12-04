@@ -1,4 +1,5 @@
 ﻿using KtSubs.Core.Entries;
+using KtSubs.Core.Exceptions;
 using KtSubs.Core.Extensions;
 using KtSubs.Core.Services;
 using KtSubs.Infrastructure.Services.EntryMergers;
@@ -23,9 +24,10 @@ namespace KtSubs.Infrastructure.Services.Readers
             var end = 0;
             var style = 0;
             var lastEventIndex = 0;
-
+            var lineNumber = 0;
             foreach (var line in lines)
             {
+                lineNumber++;
                 if (line == "[Events]")
                 {
                     startProcessing = true;
@@ -53,16 +55,24 @@ namespace KtSubs.Infrastructure.Services.Readers
 
                 var startIndex = line.IndexOf(':') + 1;
                 var values = line.GetSubstringsAtIndexes(lastEventIndex, new List<int> { start, end, formatTextIndex, style }, ',', startIndex);
-                var appearAt = GetTimeStamp(values[0]);
-                var disappearAt = GetTimeStamp(values[1]);
 
-                var dialogue = overrideSsaCodesRegex.Replace(values[2].Trim(), string.Empty);
-                var styleName = values[3].Trim();
-                layerNames.Add(styleName);
-                var contentWords = splitRegex.Split(dialogue).ToList();
-                var content = new EntryContent(id, styleName, contentWords);
-                entries.Add(new Entry(appearAt, disappearAt, content));
-                id++;
+                try
+                {
+                    var appearAt = GetTimeStamp(values[0]);
+                    var disappearAt = GetTimeStamp(values[1]);
+
+                    var dialogue = overrideSsaCodesRegex.Replace(values[2].Trim(), string.Empty);
+                    var styleName = values[3].Trim();
+                    layerNames.Add(styleName);
+                    var contentWords = splitRegex.Split(dialogue).ToList();
+                    var content = new EntryContent(id, styleName, contentWords);
+                    entries.Add(new Entry(appearAt, disappearAt, content));
+                    id++;
+                }
+                catch (WrongTimestampFormatException ex)
+                {
+                    throw new SubtitlesReadingException($"Invalid or unexpected content at line: {lineNumber}", ex);
+                }
             }
 
             var combiner = new EntryMerger();
@@ -74,19 +84,19 @@ namespace KtSubs.Infrastructure.Services.Readers
         {
             var values = timeString.Split(new char[] { ':', '.' }).Select(value => value.Trim()).ToList();
             if (values.Count != 4)
-                throw new Exception($"Wrong timestamp format, {timeString}");
+                throw new WrongTimestampFormatException($"Wrong timestamp format, {timeString}");
 
             if (!int.TryParse(values[0], out int hours))
-                throw new Exception($"Wrong timestamp format, cannot parse hours string: {values[0]}");
+                throw new WrongTimestampFormatException($"Wrong timestamp format, cannot parse hours string: {values[0]}");
 
             if (!int.TryParse(values[1], out int mins))
-                throw new Exception($"Wrong timestamp format, cannot parse hours string: {values[1]}");
+                throw new WrongTimestampFormatException($"Wrong timestamp format, cannot parse mins string: {values[1]}");
 
             if (!int.TryParse(values[2], out int secs))
-                throw new Exception($"Wrong timestamp format, cannot parse hours string: {values[2]}");
+                throw new WrongTimestampFormatException($"Wrong timestamp format, cannot parse secs string: {values[2]}");
 
             if (!int.TryParse(values[3], out int hundredths))
-                throw new Exception($"Wrong timestamp format, cannot parse hours string: {values[3]}");
+                throw new WrongTimestampFormatException($"Wrong timestamp format, cannot parse hundredths string: {values[3]}");
 
             return new TimeSpan(0, hours, mins, secs, hundredths * 10);
         }

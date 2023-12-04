@@ -51,32 +51,32 @@ namespace KtSubs.Wpf.ViewModels
         private int previousIncluded = 0;
         private PatternToSelectionConverter selectionConverter;
         private readonly IEventAggregator eventAggregator;
-        private readonly SubtitlesEntryFinder subtitlesEntryFinder;
+        private readonly SubtitlesEntries subtitlesEntries;
         private readonly IEntryDocumentCreator documentCreator;
         private readonly IDocumentHighlighter documentHiglighter;
         private readonly IDialogService dialogService;
-        private readonly LayersSettingsManager layersSettingsManager;
+        private readonly LayersSettings layersSettings;
 
         public event CancelEventHandler? CloseHandler;
 
         public DisplayEntry displayEntry;
 
         public SelectionViewModel(IEventAggregator eventAggregator,
-                                  SubtitlesEntryFinder subtitlesEntryFinder,
+                                  SubtitlesEntries subtitlesEntries,
                                   IEntryDocumentCreator documentCreator,
                                   IDocumentHighlighter documentHiglighter,
                                   IDialogService dialogService,
-                                  LayersSettingsManager layersSettingsManager)
+                                  LayersSettings layersSettings)
         {
             entryTimeStamp = "";
             searchPattern = "";
             selectionConverter = new PatternToSelectionConverter();
             this.eventAggregator = eventAggregator;
-            this.subtitlesEntryFinder = subtitlesEntryFinder;
+            this.subtitlesEntries = subtitlesEntries;
             this.documentCreator = documentCreator;
             this.documentHiglighter = documentHiglighter;
             this.dialogService = dialogService;
-            this.layersSettingsManager = layersSettingsManager;
+            this.layersSettings = layersSettings;
             displayEntry = new();
             subtitlesContent = documentCreator.Create(displayEntry);
             PropertyChanged += PropertyChangedHandler;
@@ -87,15 +87,15 @@ namespace KtSubs.Wpf.ViewModels
             IncludePreviousEntryCommand = new RelayCommand(IncludePreviousEntry);
             CancelSelection = new RelayCommand(OnCancelSelection);
             OpenLayersSettingsCommand = new RelayCommand(HandleOpenLayersSettings);
-            this.layersSettingsManager.LayersSettingsChanged += HandleLayersSettingsChange;
+            this.layersSettings.LayersSettingsChanged += HandleLayersSettingsChange;
         }
 
         private void HandleLayersSettingsChange(object? sender, EventArgs e)
         {
             var leftIndex = Math.Max(0, entryIndex - previousIncluded);
-            var rightIndex = Math.Min(subtitlesEntryFinder.EntriesCount, entryIndex + nextIncluded);
-            var activeContent = subtitlesEntryFinder.GetEntries(leftIndex, rightIndex)
-                                                    .Where(x => layersSettingsManager.IsLayerActive(x.Layer));
+            var rightIndex = Math.Min(subtitlesEntries.EntriesCount, entryIndex + nextIncluded);
+            var activeContent = subtitlesEntries.GetEntries(leftIndex, rightIndex)
+                                                    .Where(x => layersSettings.IsLayerActive(x.Layer));
 
             displayEntry = new DisplayEntry(activeContent);
             SubtitlesContent = documentCreator.Create(displayEntry);
@@ -118,11 +118,11 @@ namespace KtSubs.Wpf.ViewModels
 
             while (includeIndex >= 0)
             {
-                var result = subtitlesEntryFinder.GetEntry(includeIndex);
+                var result = subtitlesEntries.GetEntry(includeIndex);
                 if (result == null)
                     break;
 
-                var activeLayersContent = result.GroupOfEntryContent.Where(x => layersSettingsManager.IsLayerActive(x.Layer));
+                var activeLayersContent = result.GroupOfEntryContent.Where(x => layersSettings.IsLayerActive(x.Layer));
 
                 var nameSelectionGroupPair = GetNameSelectionGroupPair(displayEntry);
                 var includeResult = displayEntry.IncludeLeft(activeLayersContent);
@@ -151,13 +151,13 @@ namespace KtSubs.Wpf.ViewModels
 
             nextIncluded++;
             var includeIndex = entryIndex + nextIncluded;
-            while (includeIndex < subtitlesEntryFinder.EntriesCount)
+            while (includeIndex < subtitlesEntries.EntriesCount)
             {
-                var result = subtitlesEntryFinder.GetEntry(includeIndex);
+                var result = subtitlesEntries.GetEntry(includeIndex);
 
                 if (result != null)
                 {
-                    var activeLayersContent = result.GroupOfEntryContent.Where(x => layersSettingsManager.IsLayerActive(x.Layer));
+                    var activeLayersContent = result.GroupOfEntryContent.Where(x => layersSettings.IsLayerActive(x.Layer));
                     var nameSelectionGroupPair = GetNameSelectionGroupPair(displayEntry);
                     var includeResult = displayEntry.IncludeRight(activeLayersContent);
 
@@ -276,10 +276,10 @@ namespace KtSubs.Wpf.ViewModels
         public void NextEntry()
         {
             var nextIndex = entryIndex + 1;
-            if (nextIndex >= subtitlesEntryFinder.EntriesCount)
+            if (nextIndex >= subtitlesEntries.EntriesCount)
                 return;
 
-            var entriesResult = subtitlesEntryFinder.GetClosestEntryToRight(nextIndex);
+            var entriesResult = subtitlesEntries.GetClosestEntryToRight(nextIndex);
             if (entriesResult == null)
                 return;
 
@@ -292,7 +292,7 @@ namespace KtSubs.Wpf.ViewModels
             if (prevIndex < 0)
                 return;
 
-            var entriesResult = subtitlesEntryFinder.GetClosestEntryToLeft(prevIndex);
+            var entriesResult = subtitlesEntries.GetClosestEntryToLeft(prevIndex);
             if (entriesResult == null)
                 return;
 
@@ -351,7 +351,7 @@ namespace KtSubs.Wpf.ViewModels
         public void OnWindowActivated(WindowParameters parameters)
         {
             var time = (TimeSpan)parameters.Get(WindowParameterNames.Time);
-            var entryAndIndex = subtitlesEntryFinder.GetEntry(time);
+            var entryAndIndex = subtitlesEntries.GetEntry(time);
 
             if (entryAndIndex != null)
             {
@@ -366,7 +366,7 @@ namespace KtSubs.Wpf.ViewModels
         {
             var message = new CloseSelectionWindowMessage();
             eventAggregator.SendMessage(message);
-            layersSettingsManager.LayersSettingsChanged -= HandleLayersSettingsChange;
+            layersSettings.LayersSettingsChanged -= HandleLayersSettingsChange;
         }
     }
 }

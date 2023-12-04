@@ -35,9 +35,9 @@ namespace KtSubs.Infrastructure.Services.Readers
                     {
                         HandleState(line);
                     }
-                    catch (WrongTimestampFormatException)
+                    catch (WrongTimestampFormatException ex)
                     {
-                        throw new SubtitlesReadingException($"Invalid or unexpected content at line: {lineNumber}");
+                        throw new SubtitlesReadingException($"Invalid or unexpected content at line: {lineNumber}", ex);
                     }
                 }
                 if (state == LineType.Content && entryWords.Count > 0)

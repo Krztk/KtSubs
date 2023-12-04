@@ -36,8 +36,8 @@ namespace KtSubs.Wpf
             builder.RegisterType<SettingsViewModel>();
 
             builder.RegisterType<DialogService>().As<IDialogService>().SingleInstance();
-            builder.RegisterType<SubtitlesEntryFinder>().SingleInstance();
-            builder.RegisterType<LayersSettingsManager>().SingleInstance();
+            builder.RegisterType<SubtitlesEntries>().SingleInstance();
+            builder.RegisterType<LayersSettings>().SingleInstance();
 
             builder.RegisterType<MainViewModel>().SingleInstance();
             builder.RegisterType<MainView>().SingleInstance();

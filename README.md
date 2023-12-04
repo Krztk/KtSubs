@@ -1,6 +1,6 @@
 # KtSubs
 
-KtSubs is a desktop application designed to elevate your language learning experience by simplifying the process of creating word lists from subtitles. This user-friendly tool allows you to effortlessly generate lists of words/phrases from currently loaded subtitles. The application integrates with the VLC media player's HTTP module, enabling the retrieval of timestamps. Additionally, it supports popular subtitle formats such as '.srt' and '.ssa' and provides the ability to load subtitles from '.mkv' files using `MKVToolNix – Matroska tools for Linux/Unix and Windows`.
+KtSubs is a desktop application designed to elevate your language learning experience by simplifying the process of creating word lists from subtitles. This user-friendly tool allows you to effortlessly make lists of words/phrases from currently loaded subtitles. The application integrates with the VLC media player's HTTP module, enabling the retrieval of timestamps. Additionally, it supports popular subtitle formats such as '.srt' and '.ssa' and provides the ability to load subtitles from '.mkv' files using `MKVToolNix – Matroska tools for Linux/Unix and Windows`.
 
 ![KtSubs screenshot](./KtSubsScreenshot.png)
 
@@ -35,7 +35,7 @@ Additionally, KtSubs provides the capability to load subtitles from **.mkv** fil
     - Write pattern for selection in the input at the bottom of the view and confirm it with ENTER or `Add` button.
 
 3. Save Word List:
-    - To save your edited word list, go to File -> Save in the menu.
+    - To save your word list, go to File -> Save in the menu.
     - Choose a location and provide a name for your file.
 
 ## Selection screen pattern examples

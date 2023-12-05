@@ -38,6 +38,17 @@ namespace KtSubs.CoreTests.Selections
         }
 
         [Fact]
+        public void ShouldConvertMultipleSingleSelectionsPatternWithOverlaps()
+        {
+            var pattern = new Pattern("1-3*, 2-4*, 2");
+            var maxWordNumber = 10;
+
+            var result = pattern.ToSelections(maxWordNumber);
+
+            result.Should().BeEquivalentTo(new List<ISelection>() { new Selection(1), new Selection(2), new Selection(3), new Selection(4) });
+        }
+
+        [Fact]
         public void ShouldConvertPatternIntoMergedSelection()
         {
             var pattern = new Pattern("1-5");

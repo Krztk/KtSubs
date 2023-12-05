@@ -1,8 +1,15 @@
 ﻿namespace KtSubs.Core.Selection
 {
-    public class PatternToSelectionConverter
+    public class Pattern
     {
-        public HashSet<ISelection> Convert(string pattern, int maxNumber)
+        private readonly string pattern;
+
+        public Pattern(string pattern)
+        {
+            this.pattern = pattern;
+        }
+
+        public HashSet<ISelection> ToSelections(int maxNumber)
         {
             var selections = new HashSet<ISelection>();
             var entryPattern = pattern.Split(',');
@@ -32,14 +39,14 @@
                         {
                             for (int i = left; i <= Math.Min(right, maxNumber); i++)
                             {
-                                selections.Add(new SingleSelection(i));
+                                selections.Add(new Selection(i));
                             }
                         }
                         else
                         {
                             if (left == right)
                             {
-                                selections.Add(new SingleSelection(left));
+                                selections.Add(new Selection(left));
                             }
                             else
                             {
@@ -54,7 +61,7 @@
                     {
                         if (number > 0 && number <= maxNumber)
                         {
-                            selections.Add(new SingleSelection(number));
+                            selections.Add(new Selection(number));
                         }
                     }
                 }

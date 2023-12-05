@@ -6,11 +6,11 @@ using Xunit;
 
 namespace KtSubs.CoreTests.Selections
 {
-    public class SingleSelectionTests
+    public class SelectionTests
     {
         private readonly DisplayEntry displayEntry;
 
-        public SingleSelectionTests()
+        public SelectionTests()
         {
             displayEntry = new DisplayEntry(new EntryContent(1, "DEFAULT", new List<string> { "This", "is", "not", "a", "drill." }));
         }
@@ -21,7 +21,7 @@ namespace KtSubs.CoreTests.Selections
         public void ShouldSelectGivenWords(int wordNumber, string expectedSelectionResult)
         {
             //arrange
-            ISelection selection = new SingleSelection(wordNumber);
+            ISelection selection = new Selection(wordNumber);
 
             //act
             var result = selection.GetSelectedValue(displayEntry);
@@ -34,7 +34,7 @@ namespace KtSubs.CoreTests.Selections
         public void ShouldSelectWordWithoutPunctuationCharacters()
         {
             //arrange
-            ISelection selection = new SingleSelection(5);
+            ISelection selection = new Selection(5);
 
             //act
             var result = selection.GetSelectedValue(displayEntry);
@@ -47,7 +47,7 @@ namespace KtSubs.CoreTests.Selections
         public void ShouldThrowIndexOutOfRangeException()
         {
             //arrange
-            ISelection selection = new SingleSelection(6);
+            ISelection selection = new Selection(6);
 
             //act
             var sut = () => selection.GetSelectedValue(displayEntry);

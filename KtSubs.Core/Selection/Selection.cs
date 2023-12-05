@@ -3,12 +3,12 @@ using KtSubs.Infrastructure.Entries;
 
 namespace KtSubs.Core.Selection
 {
-    public sealed class SingleSelection : ISelection
+    public sealed class Selection : ISelection
     {
         private readonly int number;
         private readonly int index;
 
-        public SingleSelection(int number)
+        public Selection(int number)
         {
             if (number < 1)
                 throw new ArgumentOutOfRangeException(nameof(number));
@@ -20,7 +20,7 @@ namespace KtSubs.Core.Selection
 
         public override bool Equals(object? obj)
         {
-            return obj is SingleSelection selection &&
+            return obj is Selection selection &&
                    number == selection.number;
         }
 
@@ -64,15 +64,15 @@ namespace KtSubs.Core.Selection
 
         public ISelection GetSelectionIncreasedBy(int offset)
         {
-            return new SingleSelection(number + offset);
+            return new Selection(number + offset);
         }
 
-        public static bool operator ==(SingleSelection? left, SingleSelection? right)
+        public static bool operator ==(Selection? left, Selection? right)
         {
-            return EqualityComparer<SingleSelection>.Default.Equals(left, right);
+            return EqualityComparer<Selection>.Default.Equals(left, right);
         }
 
-        public static bool operator !=(SingleSelection? left, SingleSelection? right)
+        public static bool operator !=(Selection? left, Selection? right)
         {
             return !(left == right);
         }

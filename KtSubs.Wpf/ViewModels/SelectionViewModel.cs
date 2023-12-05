@@ -49,7 +49,6 @@ namespace KtSubs.Wpf.ViewModels
         private int entryIndex;
         private int nextIncluded = 0;
         private int previousIncluded = 0;
-        private PatternToSelectionConverter selectionConverter;
         private readonly IEventAggregator eventAggregator;
         private readonly SubtitlesEntries subtitlesEntries;
         private readonly IEntryDocumentCreator documentCreator;
@@ -70,7 +69,6 @@ namespace KtSubs.Wpf.ViewModels
         {
             entryTimeStamp = "";
             searchPattern = "";
-            selectionConverter = new PatternToSelectionConverter();
             this.eventAggregator = eventAggregator;
             this.subtitlesEntries = subtitlesEntries;
             this.documentCreator = documentCreator;
@@ -319,7 +317,8 @@ namespace KtSubs.Wpf.ViewModels
         private void SearchPatternChanged()
         {
             var lastWordNumber = displayEntry.NumberOfWords;
-            var selections = selectionConverter.Convert(SearchPattern, lastWordNumber);
+            var pattern = new Pattern(SearchPattern);
+            var selections = pattern.ToSelections(lastWordNumber);
             var selectedNumbers = new HashSet<int>(GetNumbers(selections));
 
             if (!selectedNumbers.SetEquals(lastSelectionNumbers))

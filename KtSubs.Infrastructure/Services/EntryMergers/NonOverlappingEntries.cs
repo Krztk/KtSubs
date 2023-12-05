@@ -2,9 +2,9 @@
 
 namespace KtSubs.Infrastructure.Services.EntryMergers
 {
-    public class EntryMerger
+    public class NonOverlappingEntries
     {
-        public IEnumerable<IEntry> Merge(IEnumerable<Entry> entries)
+        public IEnumerable<IEntry> Create(IEnumerable<Entry> entries)
         {
             var intervals = entries
                 .SelectMany(e => ToEnumerable(e.AppearAt, e.DisappearAt))

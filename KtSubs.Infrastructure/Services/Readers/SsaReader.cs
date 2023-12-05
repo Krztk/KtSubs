@@ -75,9 +75,9 @@ namespace KtSubs.Infrastructure.Services.Readers
                 }
             }
 
-            var combiner = new EntryMerger();
+            var nonOverlappingEntries = new NonOverlappingEntries();
 
-            return new ReadingResult(combiner.Merge(entries).ToList(), layerNames);
+            return new ReadingResult(nonOverlappingEntries.Create(entries).ToList(), layerNames);
         }
 
         private static TimeSpan GetTimeStamp(string timeString)

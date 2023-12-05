@@ -5,15 +5,15 @@ using Xunit;
 
 namespace KtSubs.InfrastructureTests.Entries
 {
-    public class EntriesCombinerV2Tests
+    public class NonOverlappingEntriesTests
     {
         [Fact]
         public void ShouldHaveCorrectlyCombinedEntries()
         {
             var entries = GetSampleEntries();
 
-            var enterMerger = new EntryMerger();
-            var result = enterMerger.Merge(entries);
+            var nonOverlappingEntries = new NonOverlappingEntries();
+            var result = nonOverlappingEntries.Create(entries);
 
             result.Should().HaveCount(10);
         }
@@ -23,8 +23,8 @@ namespace KtSubs.InfrastructureTests.Entries
         {
             var entries = GetSampleEntries();
 
-            var enterMerger = new EntryMerger();
-            var result = enterMerger.Merge(entries).ToList();
+            var nonOverlappingEntries = new NonOverlappingEntries();
+            var result = nonOverlappingEntries.Create(entries).ToList();
 
             result[0].AppearAt.Should().Be(TimeSpan.FromSeconds(0));
             result[0].DisappearAt.Should().Be(TimeSpan.FromSeconds(5));
@@ -48,8 +48,8 @@ namespace KtSubs.InfrastructureTests.Entries
                 CreateEntry(5, 8, "Dialogue", "Hello", 2),
             };
 
-            var enterMerger = new EntryMerger();
-            var result = enterMerger.Merge(entries).ToList();
+            var nonOverlappingEntries = new NonOverlappingEntries();
+            var result = nonOverlappingEntries.Create(entries).ToList();
 
             result.Should().BeEquivalentTo(new List<IEntry>
             {

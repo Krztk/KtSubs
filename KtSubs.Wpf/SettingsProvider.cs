@@ -17,7 +17,8 @@ namespace KtSubs.Wpf
                 WebInterfacePassword = appSettings.WebInterfacePassword,
                 Port = appSettings.Port,
                 DisplaySelectionWindowWhenSubtitleEntryIsInRange = appSettings.DisplaySelectionWindowWhenSubtitleEntryIsInRange,
-                MkvToolnixFolder = appSettings.MkvToolnixFolder
+                MkvToolnixFolder = appSettings.MkvToolnixFolder,
+                LocationOfExtractedSubtitles = appSettings.LocationOfExtractedSubtitles
             };
         }
 
@@ -29,6 +30,7 @@ namespace KtSubs.Wpf
             appSettings.Port = settings.Port;
             appSettings.DisplaySelectionWindowWhenSubtitleEntryIsInRange = settings.DisplaySelectionWindowWhenSubtitleEntryIsInRange;
             appSettings.MkvToolnixFolder = settings.MkvToolnixFolder;
+            appSettings.LocationOfExtractedSubtitles = settings.LocationOfExtractedSubtitles;
             appSettings.Save();
             SettingsChanged?.Invoke(this, EventArgs.Empty);
         }

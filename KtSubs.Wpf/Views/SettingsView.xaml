@@ -21,7 +21,7 @@
                     <ColumnDefinition Width="250" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0"  Content="Web Interface Password:" />
+                <Label Grid.Column="0"  Content="Web interface password:" />
                 <PasswordBox Grid.Column="1" xaml:Secure.Password="{Binding Settings.WebInterfacePassword, Mode=TwoWay}" VerticalContentAlignment="Center" />
             </Grid>
 
@@ -35,7 +35,7 @@
             </Grid>
 
             <Grid Margin="10 5">
-                <CheckBox Content="Pause Video When Selecting" Grid.Column="1" IsChecked="{Binding Settings.PauseVideoWhenSelecting}" />
+                <CheckBox Content="Pause video when selecting" Grid.Column="1" IsChecked="{Binding Settings.PauseVideoWhenSelecting}" />
             </Grid>
 
             <Grid Margin="5">
@@ -43,8 +43,17 @@
                     <ColumnDefinition Width="250" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Content="MkvToolnix Folder:" />
+                <Label Grid.Column="0" Content="MkvToolnix folder:" />
                 <TextBox Grid.Column="1" VerticalContentAlignment="Center" Text="{Binding Settings.MkvToolnixFolder}" />
+            </Grid>
+
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="MKV extracted subtiles folder:" />
+                <TextBox Grid.Column="1" VerticalContentAlignment="Center" Text="{Binding Settings.LocationOfExtractedSubtitles}" />
             </Grid>
         </StackPanel>
         <Grid Grid.Row="2" Margin="5">

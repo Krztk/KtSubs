@@ -1,6 +1,8 @@
 ﻿using CliWrap;
 using KtSubs.Core.Settings;
+using LanguageExt.Common;
 using Newtonsoft.Json;
+using Serilog;
 using System.Text;
 
 namespace KtSubs.Infrastructure.Services.MuxedSubtitles
@@ -9,7 +11,9 @@ namespace KtSubs.Infrastructure.Services.MuxedSubtitles
     {
         private string mvkmergePath;
         private string mkvextractPath;
+        private string extractedSubsFolder;
         private readonly ISettingsProvider settingsProvider;
+        private readonly ILogger logger;
 
         private Dictionary<string, string> codecExtensions = new Dictionary<string, string>()
         {
@@ -21,10 +25,11 @@ namespace KtSubs.Infrastructure.Services.MuxedSubtitles
             ["S_ASS"] = "ass",
         };
 
-        public MkvSubtitleExtractor(ISettingsProvider settingsProvider)
+        public MkvSubtitleExtractor(ISettingsProvider settingsProvider, ILogger logger)
         {
             this.settingsProvider = settingsProvider;
-            SetMkvtoolnixProgramPaths();
+            this.logger = logger;
+            SetSettings();
         }
 
         public bool HasMkvToolkit()
@@ -46,7 +51,7 @@ namespace KtSubs.Infrastructure.Services.MuxedSubtitles
             return mkvmergeOutput.Tracks.Where(t => t.Type == "subtitles" && codecExtensions.ContainsKey(t.Properties.CodecId)).ToList();
         }
 
-        public async Task<string> ExtractSubtitles(string inputFilePath, Track track, string outputDirectory, CancellationToken cancellationToken)
+        public async Task<string> ExtractSubtitles(string inputFilePath, Track track, CancellationToken cancellationToken)
         {
             var stdOutBuffer = new StringBuilder();
             var stdErrBuffer = new StringBuilder();
@@ -55,12 +60,12 @@ namespace KtSubs.Infrastructure.Services.MuxedSubtitles
 
             var result = await Cli.Wrap(mkvextractPath)
                 .WithArguments($"tracks \"{inputFilePath}\" {track.Id}:\"{subtitlesFileName}\"")
-                .WithWorkingDirectory(outputDirectory)
+                .WithWorkingDirectory(extractedSubsFolder)
                 .WithStandardOutputPipe(PipeTarget.ToStringBuilder(stdOutBuffer))
                 .WithStandardErrorPipe(PipeTarget.ToStringBuilder(stdErrBuffer))
                 .ExecuteAsync(cancellationToken);
 
-            return Path.Combine(outputDirectory, subtitlesFileName);
+            return Path.Combine(extractedSubsFolder, subtitlesFileName);
         }
 
         private string GetFileExtension(Track track)
@@ -74,14 +79,78 @@ namespace KtSubs.Infrastructure.Services.MuxedSubtitles
 
         private void OnSettingsChanged(object sender, EventArgs e)
         {
-            SetMkvtoolnixProgramPaths();
+            SetSettings();
         }
 
-        private void SetMkvtoolnixProgramPaths()
+        private void SetSettings()
         {
-            var mkvPath = settingsProvider.GetSettings().MkvToolnixFolder;
+            var settings = settingsProvider.GetSettings();
+            var mkvPath = settings.MkvToolnixFolder;
             mvkmergePath = Path.Combine(mkvPath, "mkvmerge");
             mkvextractPath = Path.Combine(mkvPath, "mkvextract");
+            SetExtractedSubsFolder(settings);
+        }
+
+        private void SetExtractedSubsFolder(Settings settings)
+        {
+            var path = settings.LocationOfExtractedSubtitles;
+            var expandedPath = Environment.ExpandEnvironmentVariables(path);
+
+            var fallbackPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "KtSubs", "subtitles");
+
+
+            if (IsPathValid(expandedPath))
+            {
+                var result = TryCreateSubtitlesDirectory(expandedPath);
+                if (result != TryCreateDirectoryResult.IOError)
+                {
+                    extractedSubsFolder = expandedPath;
+                    return;
+                }
+            }
+
+            var fallbackFolderCreationResult = TryCreateSubtitlesDirectory(fallbackPath);
+            if (fallbackFolderCreationResult == TryCreateDirectoryResult.IOError)
+            {
+                throw new Exception("Cannot create a directory for a fallback path");
+            }
+            extractedSubsFolder = fallbackPath;
+        }
+
+        enum TryCreateDirectoryResult
+        {
+            Exists,
+            Created,
+            IOError
+        }
+
+        private TryCreateDirectoryResult TryCreateSubtitlesDirectory(string path)
+        {
+            if (Directory.Exists(path)) return TryCreateDirectoryResult.Exists;
+
+            try
+            {
+                Directory.CreateDirectory(path);
+                return TryCreateDirectoryResult.Created;
+            }
+            catch (Exception exception)
+            {
+                logger.Error(exception, "Exception while creating directory");
+                return TryCreateDirectoryResult.IOError;
+            }
+        }
+
+        private static bool IsPathValid(string path)
+        {
+            try
+            {
+                Path.GetFullPath(path);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

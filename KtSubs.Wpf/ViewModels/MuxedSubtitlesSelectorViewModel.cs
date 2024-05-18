@@ -60,7 +60,7 @@ namespace KtSubs.Wpf.ViewModels
 
             try
             {
-                ExtractedSubtitlesPath = await mkvSubtitleExtractor.ExtractSubtitles(pathToFileWithMuxedSubs, SelectedTrack, @"C:\KtSubs_muxed\", cancellationTokenSource.Token);
+                ExtractedSubtitlesPath = await mkvSubtitleExtractor.ExtractSubtitles(pathToFileWithMuxedSubs, SelectedTrack, cancellationTokenSource.Token);
                 Close(true);
             }
             catch (OperationCanceledException)

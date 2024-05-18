@@ -7,5 +7,6 @@
         public bool PauseVideoWhenSelecting { get; set; }
         public bool DisplaySelectionWindowWhenSubtitleEntryIsInRange { get; set; }
         public string MkvToolnixFolder { get; set; }
+        public string LocationOfExtractedSubtitles { get; set; }
     }
 }

@@ -20,5 +20,8 @@
     <Setting Name="LocationOfExtractedSubtitles" Type="System.String" Scope="User">
       <Value Profile="(Default)">%LOCALAPPDATA%\KtSubs\subtitles</Value>
     </Setting>
+    <Setting Name="SelectionActivatorHotkey" Type="System.String" Scope="User">
+      <Value Profile="(Default)">0_100</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

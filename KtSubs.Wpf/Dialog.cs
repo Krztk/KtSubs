@@ -19,5 +19,8 @@ namespace KtSubs.Wpf
             DialogStatus = dialogStatus;
             CloseHandler?.Invoke(this, new CancelEventArgs());
         }
+
+        public virtual void OnClose(bool dialogResult) { }
+        public virtual void OnOpen() { }
     }
 }

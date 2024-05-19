@@ -48,16 +48,16 @@ namespace KtSubs.Wpf
             return new OpenFileDialogResult(dialog.FileName);
         }
 
-        public bool ShowDialog<T>() where T : ObservableObject
+        public bool ShowDialog<T>() where T : Dialog
         {
-            var viewModel = lifetimeScope.Resolve(typeof(T)) as ObservableObject;
+            var viewModel = lifetimeScope.Resolve(typeof(T)) as Dialog;
             if (viewModel == null)
                 throw new Exception("View model has not been resolved");
 
             return ShowDialog(viewModel);
         }
 
-        public bool ShowDialog<T>(T viewModel) where T : ObservableObject
+        public bool ShowDialog<T>(T viewModel) where T : Dialog
         {
             var view = viewProvider.GetView(viewModel.GetType());
             view.DataContext = viewModel;
@@ -79,28 +79,22 @@ namespace KtSubs.Wpf
                 window.Close();
             };
 
-            if (viewModel is Dialog dialog)
-            {
-                dialog.CloseHandler += closeDialog;
-            }
+            viewModel.OnOpen();
+            viewModel.CloseHandler += closeDialog;
 
-            window.Closed += (s, e) => OnDialogClosed(s, e, closeDialog);
+            
+            window.Closed += (s, e) => OnDialogClosed(s, e, closeDialog, viewModel);
             return window.ShowDialog() ?? false;
         }
 
-        private void OnDialogClosed(object? sender, EventArgs e, CancelEventHandler closeDialog)
+        private void OnDialogClosed(object? sender, EventArgs e, CancelEventHandler closeDialog, Dialog dialog)
         {
             var window = sender as Window;
             if (window == null)
                 return;
 
-            if (window.Content is FrameworkElement frameworkElement)
-            {
-                if (frameworkElement.DataContext is Dialog dialog)
-                {
-                    dialog.CloseHandler -= closeDialog;
-                }
-            }
+            dialog.OnClose(window.DialogResult ?? false);
+            dialog.CloseHandler -= closeDialog;
         }
 
         public void Show<T>(WindowParameters windowParams) where T : ObservableObject

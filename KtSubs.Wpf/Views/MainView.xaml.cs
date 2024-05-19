@@ -1,8 +1,7 @@
 ﻿using KtSubs.Wpf.Messages;
+using KtSubs.Wpf.Services;
 using System;
-using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Interop;
 
 namespace KtSubs.Wpf.Views
@@ -12,21 +11,7 @@ namespace KtSubs.Wpf.Views
     /// </summary>
     public partial class MainView : Window
     {
-        [DllImport("User32.dll")]
-        private static extern bool RegisterHotKey(
-            [In] IntPtr hWnd,
-            [In] int id,
-            [In] uint fsModifiers,
-            [In] uint vk);
-
-        [DllImport("User32.dll")]
-        private static extern bool UnregisterHotKey(
-            [In] IntPtr hWnd,
-            [In] int id);
-
         private HwndSource? source;
-        private const int HOTKEY_ID = 8000;
-        private const int MOD_NOREPEAT = 0x4000;
 
         private readonly IEventAggregator eventAggregator;
 
@@ -42,23 +27,6 @@ namespace KtSubs.Wpf.Views
             var helper = new WindowInteropHelper(this);
             source = HwndSource.FromHwnd(helper.Handle);
             source.AddHook(HwndHook);
-            RegisterHotKey();
-        }
-
-        private void RegisterHotKey()
-        {
-            var helper = new WindowInteropHelper(this);
-            uint key = (uint)KeyInterop.VirtualKeyFromKey(Key.F11);
-            if (!RegisterHotKey(helper.Handle, HOTKEY_ID, MOD_NOREPEAT, key))
-            {
-                // log error
-            }
-        }
-
-        private void UnregisterHotKey()
-        {
-            var helper = new WindowInteropHelper(this);
-            UnregisterHotKey(helper.Handle, HOTKEY_ID);
         }
 
         private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -67,7 +35,7 @@ namespace KtSubs.Wpf.Views
             switch (msg)
             {
                 case WM_HOTKEY:
-                    if (wParam.ToInt32() == HOTKEY_ID)
+                    if (wParam.ToInt32() == HotkeyManager.HOTKEY_ID)
                     {
                         OnHotKeyPressed();
                         handled = true;
@@ -86,7 +54,6 @@ namespace KtSubs.Wpf.Views
         {
             source?.RemoveHook(HwndHook);
             source = null;
-            UnregisterHotKey();
             base.OnClosed(e);
         }
     }

@@ -94,5 +94,17 @@ namespace KtSubs.Wpf.Properties {
                 this["LocationOfExtractedSubtitles"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0_100")]
+        public string SelectionActivatorHotkey {
+            get {
+                return ((string)(this["SelectionActivatorHotkey"]));
+            }
+            set {
+                this["SelectionActivatorHotkey"] = value;
+            }
+        }
     }
 }

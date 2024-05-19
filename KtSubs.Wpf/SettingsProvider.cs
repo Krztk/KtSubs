@@ -13,18 +13,20 @@ namespace KtSubs.Wpf
 
             return new Settings
             {
+                Hotkey = Hotkey.FromString(appSettings.SelectionActivatorHotkey, Hotkey.Default()),
                 PauseVideoWhenSelecting = appSettings.PauseVideoWhenSelecting,
                 WebInterfacePassword = appSettings.WebInterfacePassword,
                 Port = appSettings.Port,
                 DisplaySelectionWindowWhenSubtitleEntryIsInRange = appSettings.DisplaySelectionWindowWhenSubtitleEntryIsInRange,
                 MkvToolnixFolder = appSettings.MkvToolnixFolder,
-                LocationOfExtractedSubtitles = appSettings.LocationOfExtractedSubtitles
+                LocationOfExtractedSubtitles = appSettings.LocationOfExtractedSubtitles,
             };
         }
 
         public void SaveSettings(Settings settings)
         {
             var appSettings = Properties.AppSettings.Default;
+            appSettings.SelectionActivatorHotkey = settings.Hotkey.ToString();
             appSettings.WebInterfacePassword = settings.WebInterfacePassword;
             appSettings.PauseVideoWhenSelecting = settings.PauseVideoWhenSelecting;
             appSettings.Port = settings.Port;

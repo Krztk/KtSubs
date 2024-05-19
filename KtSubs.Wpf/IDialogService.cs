@@ -11,9 +11,9 @@ namespace KtSubs.Wpf
 
         void Show<T>(WindowParameters windowParams) where T : ObservableObject;
 
-        bool ShowDialog<T>() where T : ObservableObject;
+        bool ShowDialog<T>() where T : Dialog;
 
-        bool ShowDialog<T>(T vm) where T : ObservableObject;
+        bool ShowDialog<T>(T vm) where T : Dialog;
 
         SaveFileDialogResult? ShowSaveFileDialog();
     }

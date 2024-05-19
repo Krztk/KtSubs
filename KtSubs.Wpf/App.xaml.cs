@@ -10,6 +10,7 @@ using KtSubs.Wpf.ViewModels;
 using KtSubs.Wpf.Views;
 using Serilog;
 using System.Windows;
+using System.Windows.Interop;
 
 namespace KtSubs.Wpf
 {
@@ -31,6 +32,7 @@ namespace KtSubs.Wpf
             var builder = new ContainerBuilder();
             builder.Register<ILogger>((c, p) => Log.Logger).SingleInstance();
             builder.RegisterType<ViewProvider>().SingleInstance();
+            builder.RegisterType<HotkeyManager>().SingleInstance();
             builder.RegisterType<SelectionViewModel>();
             builder.RegisterType<LayersSettingsViewModel>();
             builder.RegisterType<SettingsViewModel>();
@@ -68,13 +70,20 @@ namespace KtSubs.Wpf
             vlcService.SetAccessSettings(settings.WebInterfacePassword, settings.Port);
             MainWindow = container.Resolve<MainView>();
             MainWindow.DataContext = container.Resolve<MainViewModel>();
+            var hotkeyManager = container.Resolve<HotkeyManager>();
 
             base.OnStartup(e);
             MainWindow.Show();
+            var helper = new WindowInteropHelper(MainWindow);
+            hotkeyManager.InitializeWindowHandle(helper.Handle);
+            hotkeyManager.RegisterHotKey(settings.Hotkey ?? Hotkey.Default());
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
+            var hotkeyManager = container.Resolve<HotkeyManager>();
+            hotkeyManager.UnregisterHotKey();
+
             Log.CloseAndFlush();
             container?.Dispose();
 
